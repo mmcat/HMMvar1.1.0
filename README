@@ -1,0 +1,327 @@
+<<<<<<< HEAD
+================== 
+HMMvar1.1.0 README
+==================
+
+HMMvar: profile hidden Markov model based genetic variants functional effects prediction
+
+HMMvar is a tool for automatically give a score to a genetic variant that measures the deleterious effect of the mutation. It can measure any type of variants, 
+such as single nucleiotide polymorphism (SNP), insertions and deletions (indel), etc. It can also measure the whole effect of a combination of different variants,
+such as the functional effect of compensatory indels.
+
+If you are using this tool, please cite:
+
+XXX
+
+Please send any questions, comments and suggestions to: mingml@vt.edu  
+
+
+Input
+=====
+
+1. cDNA query sequence or amino acid sequence
+
+2. necleotide variants or amino acid variants 
+
+-- format for cDNA query sequence or amino acid sequence file: Fasta, e.x.
+
+=======
+== HMMvar1.0
+
+-- Input
+
+1. cDNA query sequence
+
+2. necleotide variants
+
+format for cDNA query sequence file: Fasta, e.x.
+>>>>>>> c0904697a27e9226687ff8cad71154c30eece81d
+> seq1
+ATGGAGGAGCCGCAGTCAGATCCTAGCGTCGAGCCCCCTCTGAGTCAGGAAACATTTTCA
+GACCTATGGAAACTACTTCCTGAAAACAACGTTCTGTCCCCCTTGCCGTCCCAAGCAATG
+
+<<<<<<< HEAD
+-- format for necleotide variants file: The following is an example of an input variant file
+
+#comments row
+1	GA/T	4	#comments columns
+2	CC/-	10	#comments columns
+1	GCA/AT	12	#comments columns
+...
+
+Three required fields: The first fied is the group number of a variant, by which we are able to score multiple variants within the
+same group. The second field is a representative of a variant (major allele/minor allele). The second filed is the 
+coordinat of the variant (starts with 1). You can also add additional columns following these three fields or rows for your 
+as comments starting with '#'. However, these three columns must be the first three columns as have the format and order as stated.
+
+
+Prerequirements
+===============
+=======
+format for necleotide variants file: The following is an example of an input variant file
+
+1	GA/T	4
+2	CC/-	10
+1	GCA/AT	12
+...
+
+Three fields: The first fied is the group number of a variant, by which we are able to score multiple variants within the
+same group. The second field is a representative of a variant (major allele/minor allele). The second filed is the 
+coordinat of the variant (starts with 1). You can also add additional columns following these threefields for your 
+convenince. However, these three columns must be the first three columns as have the format and order as stated.
+
+
+-- Prerequirements
+>>>>>>> c0904697a27e9226687ff8cad71154c30eece81d
+
+1. NCBI Blast 2.2.27+ (http://blast.ncbi.nlm.nih.gov/Blast.cgi?CMD=Web&PAGE_TYPE=BlastDocs&DOC_TYPE=Download) 
+
+2. NCBI nr database (ftp://ftp.ncbi.nlm.nih.gov/blast/db/)
+
+3. HMMER3 (http://hmmer.janelia.org/)
+
+4. MUSCLE aligner (http://www.drive5.com/muscle/)
+
+<<<<<<< HEAD
+
+Installation
+============
+=======
+-- Installation
+>>>>>>> c0904697a27e9226687ff8cad71154c30eece81d
+
+Make suer that all the prerequired packages have been installed properly. Download and extract HMMvar package to a local directory.
+
+$ tar -xzvf HMMvar1.0.tar.gz 
+
+1. configure	
+	$./configure
+
+2. complile
+	$make
+
+3. install
+	$make install
+
+If you receive an error during configuration that psiblast, blastdbcmd,
+muscle or HMM cannot be found, and you have indeed installed it, then place
+it in your PATH variable, or specify its location:
+
+e.g.)
+	
+	$ ./configure PSIBLAST=/path/to/psiblast
+	$ ./configure MUSCLE=/path/to/muscle
+	$ ./configure HMM = /path/to/hmm/
+	$ ./configure BLASTDBCMD = /path/to/blastdbcmd
+	$ ./configure PSIBLAST=/path/to/psiblast MUSCLE=/path/to/muscle HMM = /path/to/hmm/ BLASTDBCMD=/path/to/blastdbcmd
+
+<<<<<<< HEAD
+
+Setting
+=======
+=======
+-- Setting
+>>>>>>> c0904697a27e9226687ff8cad71154c30eece81d
+
+If you did not specify the location of NCBI nr database during installation, 
+then you may edit Common.h file in the source folder or set it via programming option.
+      
+You can also change the path to psiblast, blastdbcmd, muscle or hmm in a
+similar way if you want to use different version.
+
+        e.g.)
+<<<<<<< HEAD
+        BLAST_DB = "/path/to/blast/database/nr"
+        PSIBLAST = "/path/to/psiblast"
+        BLASTDBCMD = "/path/to/blastdbcmd"
+        MUSCLE = "/path/to/muscle"
+        HMMPATH = "/path/to/hmm"
+
+The default paths for these programmings are as follows,
+
+	BLAST_DB = "<home>/blast/db/nr"
+	PSIBLAST = "/usr/local/ncbi/blast/bin/psiblast"
+	BLASTDBCMD = "/usr/local/ncbi/blast/bin/blastdbcmd"
+	MUSCLE = "/usr/local/bin/muscle"
+	HMMPATH = "/usr/local/bin/"
+
+
+Running
+======= 
+=======
+        BLAST_DB="/path/to/blast/database/nr"
+        PSIBLAST="/path/to/psiblast"
+        BLASTDBCMD="/path/to/blastdbcmd"
+        MUSCLE="/path/to/muscle"
+        HMMPATH="/path/to/hmm"
+
+-- Running 
+>>>>>>> c0904697a27e9226687ff8cad71154c30eece81d
+
+1. If the options are not input correctly, the HMMvar usage instructions will show:
+
+USAGE:
+<<<<<<< HEAD
+  hmmvar [Options]
+
+Options:
+  -q <query sequence filename (required)>
+  -d <database search>
+  -v <variant filename (required)>
+  --psiblastcmd <path to PSIBLAST>
+  --musclecmd <path to MUSCLE>
+  --hmmercmd <path to HMMER>
+  --blastdbcmd <path to BLASTDBCMD>
+  --seqtype <sequence type, prot or nucl, default nucl>
+  --save_blastout <save psiblast output to filename>
+  --blastout <psiblast output filename>
+  Note: Please set all the paths correctly if you are not usinig the default paths.
+
+Example: hmmvar -q <query filename> -v <variants filename>
+
+Note: 
+(i) Please use '--seqtype prot' option when your input query sequence is amino acids. And the corresponding variants file should also be about amino acid changes. 
+(ii) If you saved the psiblast output file after the first run using --save_blastout option, you can use --blastout option in the following runs.
+So the hmmvar won't run psiblast again to save plenty of time. 
+
+2. Run HMMvar with tested example:
+
+Set paths properly as stated above,then install HMMvar. 
+=======
+  hmmVar [Options]
+
+Options:
+  -q <string>
+  -d <string>
+  -v <string>
+  --psiblastcmd <string>
+  --musclecmd <string>
+  --hmmercmd <string>
+  --blastdbcmd <string>
+  --subject_sequence <string>
+
+2. Run HMMvar with tested example:
+Set pathes for blastdb, blastdbcmd, psiblast, muscle and hmmpath in Common.h file,
+
+#define BLASTDB "~/blast/db/nr"
+#define BLASTDBCMD "/usr/local/ncbi/blast/bin/blastdbcmd"
+#define PSIBLAST "/usr/local/ncbi/blast/bin/psiblast"
+#define MUSCLE "/usr/local/bin/muscle"
+#define HMMPATH "/usr/local/bin/"
+
+then install HMMvar. 
+>>>>>>> c0904697a27e9226687ff8cad71154c30eece81d
+
+If install the programming successfully, run it as follows:
+
+$hmmVar -q data/tp53_cDNA.fa -v data/tp53_simu.var
+
+<<<<<<< HEAD
+<following contents are output to the terminal>
+=======
+<following contents are outputs to the terminal>
+>>>>>>> 7a427a10bd266501912e04e4783d7b23c3531b70
+
+[17:08:27] loading query sequence from a FASTA file...
+[17:08:27] searching related sequences...
+[17:20:50] filtering related sequences...
+[17:20:53] making multiple sequence alignment...
+MUSCLE v3.8.31 by Robert C. Edgar
+
+http://www.drive5.com/muscle
+This software is donated to the public domain.
+Please cite: Edgar, R.C. Nucleic Acids Res 32(5), 1792-97.
+
+subject_file_tmp 854 seqs, max length 408, avg  length 193
+00:00:01    17 MB(-2%)  Iter   1  100.00%  K-bit distance matrix
+00:00:02  122 MB(-15%)  Iter   1  100.00%  Align node           
+00:00:02  122 MB(-16%)  Iter   1  100.00%  Root alignment
+[17:20:55] build hidden Markov model...
+# hmmbuild :: profile HMM construction from multiple sequence alignments
+# HMMER 3.0 (March 2010); http://hmmer.org/
+# Copyright (C) 2010 Howard Hughes Medical Institute.
+# Freely distributed under the GNU General Public License (GPLv3).
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# input alignment file:             /tmp/hmmVarJVCFtp/align_out_stockholm
+# output HMM file:                  /tmp/hmmVarJVCFtp/hmm_out_tmp
+# input alignment is asserted as:   protein
+# number of worker threads:         10
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+# idx name                  nseq  alen  mlen eff_nseq re/pos description
+#---- -------------------- ----- ----- ----- -------- ------ -----------
+1     align_out_stockholm    184   430   392     2.38  0.590 
+
+# CPU time: 0.66u 0.00s 00:00:00.66 Elapsed: 00:00:00.67
+[17:20:56] maching hidden Markov model...
+[17:20:56] maching hidden Markov model...
+[17:20:56] maching hidden Markov model...
+done!
+
+3. After running the program, you will get a output file called hmmVar.out 
+containing variants information and the corresponding scores 
+at the current directory. for example, 
+
+<<<<<<< HEAD
+G/T     4       1.799	#comments
+G/-     7       0.998	#comments
+...
+
+Other Scripts
+=============
+
+1. HGVS2HMMvar.pl
+
+We use this script to convert the HGVS variants format to HMMvar input format. 
+
+For example, c.7294_7295delGT ==> 1	GT/-	7294
+
+Usage: perl HGVS2HMMvar.pl -s <fasta file> -v <variant file> -g <group column index> -c <HGVE allele column index>
+
+The inputs include the query fast file, variant file with HGVE format, the variant ID column index and HGVE name column index in the variant file. 
+The index starts with 0.
+
+2. CompensatoryIndels.cpp
+
+This is a multithreads programming for generating compensatory indel sets for given variants. The input file is a HMMvar input variant file. 
+
+Example: ./CompensatoryIndels <HMMvar format variants file>
+
+Please use 
+	export OMP_THREADS_NUM = <the number of threads>
+to set the number of workers.
+
+Here is an example of the output:
+
+#find compensary for var:221	C/-	76
+221_0	-/X	96	290
+221_0	C/-	94	6408
+221_0	C/-	80	6588
+221_0	C/-	79	232
+221_0	C/-	76	221
+221_1	C/-	94	6408
+221_1	C/-	80	6588
+221_1	C/-	76	221
+221_2	C/-	94	6408
+221_2	C/-	79	232
+221_2	C/-	76	221
+221_3	C/-	80	6588
+221_3	C/-	79	232
+221_3	C/-	76	221
+221_4	-/X	96	290
+221_4	C/-	76	221
+
+The program finds five compensatory indel sets for a given variant '221	C/-	76' indexing through 0 to 4.
+
+
+
+
+
+
+
+
+=======
+G/T     4       1.799
+G/-     7       0.998
+...
+>>>>>>> c0904697a27e9226687ff8cad71154c30eece81d
