@@ -25,7 +25,6 @@
 
 char usage[] =
 		"USAGE:\
-<<<<<<< HEAD
 		\n  hmmvar [Options]\
 		\n\nOptions:\
 		\n  -q <query sequence filename (required)>\
@@ -38,21 +37,9 @@ char usage[] =
 		\n  --seqtype <sequence type, prot or nucl, default nucl>\
 		\n  --save_blastout <save psiblast output to filename>\
 		\n  --blastout <psiblast output filename>\
+		\n  --hmmbuildout <hmmbuild output filename>\
 		\n  Note: Please set all the paths correctly if you are not usinig the default paths.\
 		\n\nExample: hmmvar -q <query filename> -v <variants filename>\n";
-=======
-		\n  HMMvar [Options]\
-		\n\nOptions:\
-		\n  -q <string>\
-		\n  -d <string>\
-		\n  -v <string>\
-		\n  --psiblastcmd <string>\
-		\n  --musclecmd <string>\
-		\n  --hmmercmd <string>\
-		\n  --blastdbcmd <string>\
-		\n  --subject_sequence <string>\
-		\n";
->>>>>>> c0904697a27e9226687ff8cad71154c30eece81d
 
 
 Option::Option(){
@@ -69,23 +56,23 @@ int Option::SetOptions(int argc, char** argv){
 			static struct option long_options[] =
 			{
 					{"blastout", required_argument, 0, 1},
-					{"save_blastout", required_argument, 0, 2},
-					{"psiblastcmd", required_argument, 0, 3},
-					{"blastdbcmd", required_argument, 0, 4},
+					{"hmmbuildout", required_argument, 0, 2},
+					{"seqtype",required_argument,0,3},
+					{"save_blastout", required_argument, 0, 4},
+					{"psiblastcmd", required_argument, 0, 5},
+					{"blastdbcmd", required_argument, 0, 6},
 
-					{"save_muscleout", required_argument,0,5},
-					{"musclecmd", required_argument,0, 6},
+					{"save_muscleout", required_argument,0,7},
+					{"musclecmd", required_argument,0, 8},
 
-					{"save_hmmerout",required_argument,0,7},
-					{"hmmercmd",required_argument, 0, 8},
+					{"save_hmmerout",required_argument,0,9},
+					{"hmmercmd",required_argument, 0, 10},
 
-					{"subject_sequence",required_argument,0,9},
+					{"subject_sequence",required_argument,0,11},
 
-<<<<<<< HEAD
-					{"seqtype",required_argument,0,10},
+					
+					
 
-=======
->>>>>>> c0904697a27e9226687ff8cad71154c30eece81d
 			};
 			/* getopt_long stores the option index here. */
 			int option_index = 0;
@@ -103,35 +90,37 @@ int Option::SetOptions(int argc, char** argv){
 						blast_output_file_name_ = optarg;
 						break;
 					case 2:
-						save_blastout_ = optarg;
-						break;
+					    hmmbuild_output_file_name_ = optarg;
+					    break;
 					case 3:
-						psiblast_command_ = optarg;
-						break;
-					case 4:
-						blastdbcmd_command_ = optarg;
-						break;
-					case 5:
-						save_muscle_ = optarg;
-						break;
-					case 6:
-						muscle_command_ = optarg;
-						break;
-					case 7:
-						save_hmmer_=optarg;
-						break;
-					case 8:
-						hmmer_command_ = optarg;
-						break;
-					case 9:
-						subject_sequences_file_name_ = optarg;
-						break;
-<<<<<<< HEAD
-					case 10:
 					    seq_type_ = optarg;
 						break;
-=======
->>>>>>> c0904697a27e9226687ff8cad71154c30eece81d
+					case 4:
+						save_blastout_ = optarg;
+						break;
+					case 5:
+						psiblast_command_ = optarg;
+						break;
+					case 6:
+						blastdbcmd_command_ = optarg;
+						break;
+					case 7:
+						save_muscle_ = optarg;
+						break;
+					case 8:
+						muscle_command_ = optarg;
+						break;
+					case 9:
+						save_hmmer_=optarg;
+						break;
+					case 10:
+						hmmer_command_ = optarg;
+						break;
+					case 11:
+						subject_sequences_file_name_ = optarg;
+						break;
+					
+					
 					case 'q':
 						query_file_name_ = optarg;
 						break;

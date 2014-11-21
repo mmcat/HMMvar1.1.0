@@ -55,21 +55,14 @@ int blastSearch::runBlast(string blastdb_file_name,string psiblast_cmd) {
 	if(psiblast_cmd.empty()) psiblast_cmd = PSIBLAST;
 
 
-<<<<<<< HEAD
 	sprintf(blast_command, "%s -query %s -db %s -show_gis -max_target_seqs %d -num_iterations %d -num_threads %d -outfmt \"6 sseqid sgi pident evalue bitscore \" -evalue %f -out %s",
-=======
-	sprintf(blast_command, "%s -query %s -db %s -show_gis -max_target_seqs %d -num_iterations %d -outfmt \"6 sseqid sgi pident evalue bitscore \" -evalue %f -out %s",
->>>>>>> c0904697a27e9226687ff8cad71154c30eece81d
 			psiblast_cmd.c_str(),
 			blast_query_file_name_.c_str(),
 			blastdb_file_name.c_str(),
 			max_num,
 			5,
 			0.01,
-<<<<<<< HEAD
 			20,
-=======
->>>>>>> c0904697a27e9226687ff8cad71154c30eece81d
 			blast_output_file_name_.c_str());
 
 //	if (b_logging_) {

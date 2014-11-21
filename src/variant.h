@@ -32,13 +32,10 @@ public:
 	string varinat_str_;
 	string variant_id_;
 	string set_id_;
-<<<<<<< HEAD
 	string commends_;
 	string type;
 	string wild;
 	string mutant;
-=======
->>>>>>> c0904697a27e9226687ff8cad71154c30eece81d
 //	double wt_proba_;
 //	double mt_proba_;
 //	double odds_;

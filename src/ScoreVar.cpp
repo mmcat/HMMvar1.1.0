@@ -19,9 +19,11 @@
  */
 
 #include <string>
+#include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
 #include <algorithm>
+#include <unistd.h>
 
 #include "ScoreVar.h"
 #include "CodeonAlphabeta.h"
@@ -83,17 +85,18 @@ void ScoreVar::translate(const Sequence& nt, Sequence* aa,int type){
 }
 
 
-int ScoreVar::getScore(string hmm_path,string wtaa_file_name,string multi_align_file){
+int ScoreVar::getScore(string hmmbuild_file,string hmm_path,string wtaa_file_name,string multi_align_file){
 
 
 	if(hmm_output_file_name_.empty()){
 		hmm_output_file_name_ = "/hmm_out_tmp";
 	}
-
-	buildHMM(hmm_path,multi_align_file);
+	if(hmmbuild_file.empty())
+		buildHMM(hmm_path,multi_align_file);
 //	string query_seq_aa;
 //	this->nt2aa(query_seq_.seq_, &query_seq_aa);
-	double bs_wild = searchHMM(hmm_path,wtaa_file_name);
+		double bs_wild = searchHMM(hmmbuild_file,hmm_path,wtaa_file_name);
+	
 	int len = query_seq_.seq_.length()/3;
 	double null_pro = getNullPro(len);
 	double pro_wild = null_pro*exp(bs_wild*CONST_LOG2/INTSCALE);
@@ -109,20 +112,14 @@ int ScoreVar::getScore(string hmm_path,string wtaa_file_name,string multi_align_
 	for(map<string,vector<variant> >::iterator it = variants_.begin(); it!=variants_.end();it++){
 		Sequence mut_seq_nt,mut_seq_aa;
 		this->getMutantSeqFromVariantsSet(it->second,&mut_seq_nt);
-<<<<<<< HEAD
         if(mut_seq_nt.seq_.empty()){fprintf(fp,"%s\t%.3f\n",it->first.c_str(),999.0);continue;}
 		if(seq_type_=="prot"){mut_seq_aa = mut_seq_nt;}
 		else{translate(mut_seq_nt,&mut_seq_aa,1);};
-=======
-                if(mut_seq_nt.seq_.empty()){fprintf(fp,"%s\t%.3f\n",it->first.c_str(),999.0);continue;}
-		translate(mut_seq_nt,&mut_seq_aa,1);
->>>>>>> c0904697a27e9226687ff8cad71154c30eece81d
 		string mut_aa_file_name=tmp_dir_+"/query_aa_file_mt";
 		mut_seq_aa.Print(mut_aa_file_name);
-		double bs_mut = searchHMM(hmm_path,mut_aa_file_name);
+		double bs_mut = searchHMM(hmmbuild_file,hmm_path,mut_aa_file_name);
 		double mt_proba = null_pro*exp(bs_mut*CONST_LOG2/INTSCALE);
 //		it->wt_proba_ = pro_wild;
-<<<<<<< HEAD
 		double odds = getOdds(pro_wild,mt_proba);
 		double diffs = getDiffs(bs_wild,bs_mut);
 		for(vector<variant>::iterator itt = it->second.begin();itt!=it->second.end();++itt){
@@ -131,11 +128,6 @@ int ScoreVar::getScore(string hmm_path,string wtaa_file_name,string multi_align_
 			else
 				fprintf(fp,"%s\t%.15f\t%s\n",it->first.c_str(),odds,itt->commends_.c_str());
 		}
-=======
-//		double odds = getOdds(pro_wild,mt_proba);
-		double diffs = getDiffs(bs_wild,bs_mut);
-		fprintf(fp,"%s\t%.3f\n",it->first.c_str(),diffs);
->>>>>>> c0904697a27e9226687ff8cad71154c30eece81d
 
 	}
 
@@ -148,30 +140,22 @@ int ScoreVar::getScore(string hmm_path,string wtaa_file_name,string multi_align_
 }
 
 int ScoreVar::getVariants(string filename){
-<<<<<<< HEAD
     variant_file_name_ = filename;
-=======
-        variant_file_name_ = filename;
->>>>>>> c0904697a27e9226687ff8cad71154c30eece81d
 	FILE* fp = fopen(filename.c_str(),"r");
 	if(fp==NULL){printf("Cannot find variants file:No such file!\n");return -1;}
 	char buffer[BUF_SIZE_MED];
 	char *a;
 	int rn = 0;
 	while(fgets(buffer,BUF_SIZE_MED,fp)!=NULL){
-<<<<<<< HEAD
 		printf("%s\n",buffer);
 		if(buffer[0]=='#')
 			continue;
-=======
->>>>>>> c0904697a27e9226687ff8cad71154c30eece81d
 		rn++;
 		variant var;
 		a = strtok(buffer,"\t\n ");
 		var.set_id_ = string(a);
 		a = strtok(NULL,"\t\n");
 		var.varinat_str_ = string(a);
-<<<<<<< HEAD
 		string::size_type pos = var.varinat_str_.find('/');
 		if(pos==string::npos){printf("Error: Variant format is not correct:%s\n",var.varinat_str_.c_str());exit(0);}
 		var.wild = var.varinat_str_.substr(0,pos);
@@ -186,12 +170,6 @@ int ScoreVar::getVariants(string filename){
 		var.variant_id_ = this->query_seq_.id_;
 		a = strtok(NULL,"\n");
 		if(a) var.commends_=string(a);
-=======
-		a = strtok(NULL,"\t\n ");
-		if(!a) {printf("Error: File format is not correct at row %d: %s\n",rn,filename.c_str());exit(0);}
-		var.pos = atof(a);
-		var.variant_id_ = this->query_seq_.id_;
->>>>>>> c0904697a27e9226687ff8cad71154c30eece81d
 		if(variants_.find(var.set_id_)==variants_.end()){
 			vector<variant> var_set;
 			var_set.push_back(var);
@@ -239,26 +217,15 @@ void ScoreVar::getMutantSeqFromVariantsSet(vector<variant> &var, Sequence* mut_s
 	sort(var.begin(),var.end(),myComp);
 	int start = 0;
 	for(vector<variant>::iterator it=var.begin();it!=var.end();++it){
-<<<<<<< HEAD
 //		string::size_type pos = it->varinat_str_.find('/');
 //		if(pos==string::npos){printf("Error: Variant format is not correct:%s\n",it->varinat_str_.c_str());exit(0);}
 		string w = it->wild;/*it->varinat_str_.substr(0,pos);*/
 		string m = it->mutant;/*it->varinat_str_.substr(pos+1);*/
-=======
-		string::size_type pos = it->varinat_str_.find('/');
-		if(pos==string::npos){printf("Error: Variant format is not correct:%s\n",it->varinat_str_.c_str());exit(0);}
-		string w = it->varinat_str_.substr(0,pos);
-		string m = it->varinat_str_.substr(pos+1);
->>>>>>> c0904697a27e9226687ff8cad71154c30eece81d
 		string s = query_seq_.seq_.substr(it->pos-1,w.size());
 		if(w.compare(s)!=0&&w!="-"){
 				printf("Warning:The variant %s %d is not match with the sequence! Please check the variant.\n", it->varinat_str_.c_str(),it->pos);
 			}
-<<<<<<< HEAD
 //		else {
-=======
-		else {
->>>>>>> c0904697a27e9226687ff8cad71154c30eece81d
 			string seg = str.substr(start,it->pos-start-1);
 			if(w=="-" && m!="-"){
 				seg = str.substr(start,it->pos-start);
@@ -268,11 +235,7 @@ void ScoreVar::getMutantSeqFromVariantsSet(vector<variant> &var, Sequence* mut_s
 			else mut_seq->seq_.append(seg+m);
 			start = it->pos+w.length()-1;
 
-<<<<<<< HEAD
 //		}
-=======
-		}
->>>>>>> c0904697a27e9226687ff8cad71154c30eece81d
 
 	}
 	mut_seq->seq_.append(str.substr(start));
@@ -308,9 +271,10 @@ int ScoreVar::buildHMM(string hmm_path,string multi_align_file){
 
 }
 
-double ScoreVar::searchHMM(string hmm_path,string aa_file_name){
+double ScoreVar::searchHMM(string hmmbuild_file,string hmm_path,string aa_file_name){
 	char hmmsearch_cmd[BUF_SIZE_MED];
 	string hmm_out_file = tmp_dir_+hmm_output_file_name_;
+	if(!hmmbuild_file.empty()) hmm_out_file=hmmbuild_file;
 	if(hmm_path.empty()) hmm_path = HMMPATH;
 	sprintf(hmmsearch_cmd,"%shmmsearch %s %s|grep -A4 \"Scores for complete sequences\"|tail -n 1",hmm_path.c_str(), hmm_out_file.c_str(),aa_file_name.c_str());
 	Log("maching hidden Markov model...\n",true);
@@ -367,6 +331,10 @@ int ScoreVar::parseBlastResults(string blastdb_cmd,string blastdb,string subject
 
 	sprintf(tmp_file_id, "%s/ids", this->tmp_dir_.c_str());
 	FILE* fp_id_out = fopen(tmp_file_id, "w");
+    if(fp_id_out == NULL) {
+    	Log("Open file for writing selected homologous sequences ids failed. \n",true);
+    	return -1;
+    }
 
 	char last_id[BUF_SIZE_MED] = "";
 
@@ -382,14 +350,9 @@ int ScoreVar::parseBlastResults(string blastdb_cmd,string blastdb,string subject
 		char id[BUF_SIZE_MED]="";
 
 		if (db_id == NULL || gi == NULL) {
-<<<<<<< HEAD
 			Log("Parsing Error,Skipped!\n", true);
 //			return -1;
 			continue;
-=======
-			Log("Parsing Error\n", true);
-			return -1;
->>>>>>> c0904697a27e9226687ff8cad71154c30eece81d
 		}
 
 		strcpy(id, db_id);

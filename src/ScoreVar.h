@@ -45,10 +45,7 @@ public:
         string variant_file_name_;
 	string tmp_dir_;
 	string score_out_file_name_;
-<<<<<<< HEAD
 	string seq_type_;
-=======
->>>>>>> c0904697a27e9226687ff8cad71154c30eece81d
 
 //	string hmm_command_;
 
@@ -58,7 +55,7 @@ public:
 	int CreateTempDir();
 	int parseBlastResults(string blastdb_cmd,string blastdb,string subject_sequence_file_name,string blast_out_file_name,double cutoff);
 	int setHomoseq(string blastdb_cmd,string blastdb,string subject_sequence_file_name,string blast_out_file_name,double cutoff);
-	int getScore(string hmm_path,string wtaa_file_name,string multi_align_file);
+	int getScore(string hmmbuild_file,string hmm_path,string wtaa_file_name,string multi_align_file);
 	int getVariants(string filename);
 	double getNullPro(int len);
 	double getOdds(double p1,double p2);
@@ -73,7 +70,7 @@ private:
 	int SetSequences();
 	int CreateFastaFileUsingBlastdbcmd(string blastdb_cmd,string blastdb,string subject_seq_file_name,string file_id);
 	int buildHMM(string hmm_path,string multi_align_file);
-	double searchHMM(string hmm_path,string aa_file_name);
+	double searchHMM(string hmmbuild_file,string hmm_path,string aa_file_name);
 
 
 };

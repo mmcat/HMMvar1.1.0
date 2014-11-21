@@ -32,14 +32,11 @@ public:
 	string save_blastout_;
 	string save_muscle_;
 	string save_hmmer_;
-<<<<<<< HEAD
     string seq_type_;
-=======
-
->>>>>>> c0904697a27e9226687ff8cad71154c30eece81d
 
 
 	string blast_output_file_name_;
+	string hmmbuild_output_file_name_;
 	string psiblast_command_;
 	string blastdbcmd_command_;
 	string query_file_name_;

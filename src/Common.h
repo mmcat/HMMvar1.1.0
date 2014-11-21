@@ -31,19 +31,11 @@
 #define INTSCALE 1000.0
 #define CUTOFF 0.9
 
-<<<<<<< HEAD
 #define BLASTDB "~/blast/db/nr"
 #define BLASTDBCMD "/usr/local/ncbi/blast/bin/blastdbcmd"
 #define PSIBLAST "/usr/local/ncbi/blast/bin/psiblast"
 #define MUSCLE "/usr/local/bin/muscle"
-#define HMMPATH "/usr/local/bin/"
-=======
-#define BLASTDB "/research/mingming/ncbi-blast-2.2.26+/db/nr"
-#define BLASTDBCMD "~/bin/blastdbcmd"
-#define PSIBLAST "~/bin/psiblast"
-#define MUSCLE "~/bin/muscle"
-#define HMMPATH "~/bin/"
->>>>>>> c0904697a27e9226687ff8cad71154c30eece81d
+#define HMMPATH "/home/mingming/bin/"
 
 #define VERSION "1.1"
 
