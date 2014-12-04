@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ================== 
 HMMvar1.1.0 README
 ==================
@@ -25,22 +24,10 @@ Input
 
 -- format for cDNA query sequence or amino acid sequence file: Fasta, e.x.
 
-=======
-== HMMvar1.0
-
--- Input
-
-1. cDNA query sequence
-
-2. necleotide variants
-
-format for cDNA query sequence file: Fasta, e.x.
->>>>>>> c0904697a27e9226687ff8cad71154c30eece81d
 > seq1
 ATGGAGGAGCCGCAGTCAGATCCTAGCGTCGAGCCCCCTCTGAGTCAGGAAACATTTTCA
 GACCTATGGAAACTACTTCCTGAAAACAACGTTCTGTCCCCCTTGCCGTCCCAAGCAATG
 
-<<<<<<< HEAD
 -- format for necleotide variants file: The following is an example of an input variant file
 
 #comments row
@@ -57,22 +44,6 @@ as comments starting with '#'. However, these three columns must be the first th
 
 Prerequirements
 ===============
-=======
-format for necleotide variants file: The following is an example of an input variant file
-
-1	GA/T	4
-2	CC/-	10
-1	GCA/AT	12
-...
-
-Three fields: The first fied is the group number of a variant, by which we are able to score multiple variants within the
-same group. The second field is a representative of a variant (major allele/minor allele). The second filed is the 
-coordinat of the variant (starts with 1). You can also add additional columns following these threefields for your 
-convenince. However, these three columns must be the first three columns as have the format and order as stated.
-
-
--- Prerequirements
->>>>>>> c0904697a27e9226687ff8cad71154c30eece81d
 
 1. NCBI Blast 2.2.27+ (http://blast.ncbi.nlm.nih.gov/Blast.cgi?CMD=Web&PAGE_TYPE=BlastDocs&DOC_TYPE=Download) 
 
@@ -82,13 +53,9 @@ convenince. However, these three columns must be the first three columns as have
 
 4. MUSCLE aligner (http://www.drive5.com/muscle/)
 
-<<<<<<< HEAD
 
 Installation
 ============
-=======
--- Installation
->>>>>>> c0904697a27e9226687ff8cad71154c30eece81d
 
 Make suer that all the prerequired packages have been installed properly. Download and extract HMMvar package to a local directory.
 
@@ -115,13 +82,9 @@ e.g.)
 	$ ./configure BLASTDBCMD = /path/to/blastdbcmd
 	$ ./configure PSIBLAST=/path/to/psiblast MUSCLE=/path/to/muscle HMM = /path/to/hmm/ BLASTDBCMD=/path/to/blastdbcmd
 
-<<<<<<< HEAD
 
 Setting
 =======
-=======
--- Setting
->>>>>>> c0904697a27e9226687ff8cad71154c30eece81d
 
 If you did not specify the location of NCBI nr database during installation, 
 then you may edit Common.h file in the source folder or set it via programming option.
@@ -130,7 +93,6 @@ You can also change the path to psiblast, blastdbcmd, muscle or hmm in a
 similar way if you want to use different version.
 
         e.g.)
-<<<<<<< HEAD
         BLAST_DB = "/path/to/blast/database/nr"
         PSIBLAST = "/path/to/psiblast"
         BLASTDBCMD = "/path/to/blastdbcmd"
@@ -148,20 +110,10 @@ The default paths for these programmings are as follows,
 
 Running
 ======= 
-=======
-        BLAST_DB="/path/to/blast/database/nr"
-        PSIBLAST="/path/to/psiblast"
-        BLASTDBCMD="/path/to/blastdbcmd"
-        MUSCLE="/path/to/muscle"
-        HMMPATH="/path/to/hmm"
-
--- Running 
->>>>>>> c0904697a27e9226687ff8cad71154c30eece81d
 
 1. If the options are not input correctly, the HMMvar usage instructions will show:
 
 USAGE:
-<<<<<<< HEAD
   hmmvar [Options]
 
 Options:
@@ -181,36 +133,12 @@ Example: hmmvar -q <query filename> -v <variants filename>
 
 Note: 
 (i) Please use '--seqtype prot' option when your input query sequence is amino acids. And the corresponding variants file should also be about amino acid changes. 
-(ii) If you saved the psiblast output file after the first run using --save_blastout option, you can use --blastout option in the following runs.
-So the hmmvar won't run psiblast again to save plenty of time. 
+(ii) If you saved the psiblast output file after the first run using --save_blastout option, you can use --blastout option in the following runs. So the hmmvar won't run psiblast again to save plenty of time. 
+(iii) If you have pre-computed profile hidden Markov model, you can use --hmmbuildout option to specify the HMM to save running time.
 
 2. Run HMMvar with tested example:
 
 Set paths properly as stated above,then install HMMvar. 
-=======
-  hmmVar [Options]
-
-Options:
-  -q <string>
-  -d <string>
-  -v <string>
-  --psiblastcmd <string>
-  --musclecmd <string>
-  --hmmercmd <string>
-  --blastdbcmd <string>
-  --subject_sequence <string>
-
-2. Run HMMvar with tested example:
-Set pathes for blastdb, blastdbcmd, psiblast, muscle and hmmpath in Common.h file,
-
-#define BLASTDB "~/blast/db/nr"
-#define BLASTDBCMD "/usr/local/ncbi/blast/bin/blastdbcmd"
-#define PSIBLAST "/usr/local/ncbi/blast/bin/psiblast"
-#define MUSCLE "/usr/local/bin/muscle"
-#define HMMPATH "/usr/local/bin/"
-
-then install HMMvar. 
->>>>>>> c0904697a27e9226687ff8cad71154c30eece81d
 
 If install the programming successfully, run it as follows:
 
@@ -262,7 +190,6 @@ done!
 containing variants information and the corresponding scores 
 at the current directory. for example, 
 
-<<<<<<< HEAD
 G/T     4       1.799	#comments
 G/-     7       0.998	#comments
 ...
@@ -320,8 +247,3 @@ The program finds five compensatory indel sets for a given variant '221	C/-	76' 
 
 
 
-=======
-G/T     4       1.799
-G/-     7       0.998
-...
->>>>>>> c0904697a27e9226687ff8cad71154c30eece81d
