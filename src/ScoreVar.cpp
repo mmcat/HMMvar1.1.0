@@ -24,6 +24,7 @@
 #include <math.h>
 #include <algorithm>
 #include <unistd.h>
+#include <map>
 
 #include "ScoreVar.h"
 #include "CodeonAlphabeta.h"
@@ -335,8 +336,10 @@ int ScoreVar::parseBlastResults(string blastdb_cmd,string blastdb,string subject
     	Log("Open file for writing selected homologous sequences ids failed. \n",true);
     	return -1;
     }
+    
 
 	char last_id[BUF_SIZE_MED] = "";
+	map <string,bool> mp;
 
 	// get subject seqs
 	while (!feof(fp)) {
@@ -354,6 +357,10 @@ int ScoreVar::parseBlastResults(string blastdb_cmd,string blastdb,string subject
 //			return -1;
 			continue;
 		}
+
+		if(mp.find(db_id)!=mp.end())
+			continue;
+		mp[db_id] = true;
 
 		strcpy(id, db_id);
 
