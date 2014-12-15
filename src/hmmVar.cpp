@@ -106,7 +106,7 @@ int main(int argc, char** argv){
        score.mtscores.clear();
        score.ids.clear();
 
-       group_align_file_name=filename+"_target"+to_string(clustering.targetG);
+       group_align_file_name=filename+"_target"+char(clustering.targetG+'0');
        clustering.printCluter(clustering.targetG,group_align_file_name);
        score.getScore(opt.hmmbuild_output_file_name_,opt.hmmer_command_,wtaa_query_file_name,group_align_file_name);
        grouped_wtscores.push_back(score.wtscores);
@@ -115,7 +115,7 @@ int main(int argc, char** argv){
 
        for(int i=0;i<clustering.k;i++){
        	if(i==clustering.targetG) continue;
-       	group_align_file_name=filename+to_string(i);
+       	group_align_file_name=filename+char(i+'0');
        	clustering.printCluter(i,group_align_file_name);
            score.wtscores.clear();
            score.mtscores.clear();
