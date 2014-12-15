@@ -25,6 +25,7 @@
 #include <algorithm>
 #include <unistd.h>
 #include <map>
+#include <fstream>
 
 #include "ScoreVar.h"
 #include "CodeonAlphabeta.h"
@@ -123,11 +124,19 @@ int ScoreVar::getScore(string hmmbuild_file,string hmm_path,string wtaa_file_nam
 //		it->wt_proba_ = pro_wild;
 		double odds = getOdds(pro_wild,mt_proba);
 		double diffs = getDiffs(bs_wild,bs_mut);
+
+		ids.push_back(it->first);
 		for(vector<variant>::iterator itt = it->second.begin();itt!=it->second.end();++itt){
-			if(itt->type=="snp")
+			if(itt->type=="snp"){
 				fprintf(fp,"%s\t%.15f\t%s\n",it->first.c_str(),diffs,itt->commends_.c_str());
-			else
+				wtscores.push_back(bs_wild);
+				mtscores.push_back(bs_mut);
+			}
+			else{
 				fprintf(fp,"%s\t%.15f\t%s\n",it->first.c_str(),odds,itt->commends_.c_str());
+				wtscores.push_back(pro_wild);
+				mtscores.push_back(mt_proba);
+			}
 		}
 
 	}
@@ -398,6 +407,10 @@ int ScoreVar::CreateFastaFileUsingBlastdbcmd(string blastdb_cmd,string blastdb,s
 				subject_seq_file_name.c_str()
 				);
 		system(blastdbcmd);
+
+		ofstream fout(subject_seq_file_name.c_str(),ios::app);
+		fout<<query_seq_.def_<<"\n"<<query_seq_.seq_;
+		fout.close();
 
 	return 0;
 }

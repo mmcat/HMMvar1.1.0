@@ -26,6 +26,7 @@
 #include "MultiAlign.h"
 #include "ScoreVar.h"
 #include "Option.h"
+#include "Kmeans.h"
 
 using namespace std;
 
@@ -71,18 +72,70 @@ int main(int argc, char** argv){
     		  && align.make_multi_align(opt.muscle_command_,blast.subject_sequences_file_name_,opt.muscle_output_file_name_)!=-1)
 
     	   align.fasta2stockholm(align.align_output_file_fasta_);
+
+
     }
+    Log("======Step 4: clustering the MSA======\n",true);
+    Kmeans clustering(3,&align);
+    clustering.init();
+    clustering.runKmeans();
+
+
 
 
     score.getVariants(opt.variants_file_name_);  // get the mutation (alleles and positions)
     
-// step 4&5: build hidden Markov model and scoring
-    Log("======Step 4 & 5: make hidden Markov model and scoring ======\n",true);
-	score.getScore(opt.hmmbuild_output_file_name_,opt.hmmer_command_,wtaa_query_file_name,align.align_output_file_stockholm_);
+    Log("======Step 5: make hidden Markov model and scoring ======\n",true);
 
-	cout<<"done!"<<endl;
+       string group_align_file_name = score.tmp_dir_+"/group_align_output_file_stockholm";
+       string filename = group_align_file_name;
+       vector<vector<double> > grouped_wtscores;
+       vector<vector<double> > grouped_mtscores;
+       vector<vector<string> > grouped_ids;
+
+       score.wtscores.clear();
+       score.mtscores.clear();
+       score.ids.clear();
+
+       score.getScore(opt.hmmbuild_output_file_name_,opt.hmmer_command_,wtaa_query_file_name,align.align_output_file_stockholm_);
+       grouped_wtscores.push_back(score.wtscores);
+       grouped_mtscores.push_back(score.mtscores);
+       grouped_ids.push_back(score.ids);
+
+       score.wtscores.clear();
+       score.mtscores.clear();
+       score.ids.clear();
+
+       group_align_file_name=filename+"_target"+to_string(clustering.targetG);
+       clustering.printCluter(clustering.targetG,group_align_file_name);
+       score.getScore(opt.hmmbuild_output_file_name_,opt.hmmer_command_,wtaa_query_file_name,group_align_file_name);
+       grouped_wtscores.push_back(score.wtscores);
+       grouped_mtscores.push_back(score.mtscores);
+       grouped_ids.push_back(score.ids);
+
+       for(int i=0;i<clustering.k;i++){
+       	if(i==clustering.targetG) continue;
+       	group_align_file_name=filename+to_string(i);
+       	clustering.printCluter(i,group_align_file_name);
+           score.wtscores.clear();
+           score.mtscores.clear();
+           score.ids.clear();
+       	score.getScore(opt.hmmbuild_output_file_name_,opt.hmmer_command_,wtaa_query_file_name,group_align_file_name);
+       	grouped_wtscores.push_back(score.wtscores);
+       	grouped_mtscores.push_back(score.mtscores);
+       	grouped_ids.push_back(score.ids);
+       }
+
+       for(int i=0;i<grouped_wtscores.size();i++){
+       	for(int j=0;j<grouped_wtscores[i].size();j++){
+       		cout<<"("<<grouped_ids[i][j]<<":"<<grouped_wtscores[i][j]<<","<<grouped_mtscores[i][j]<<")"<<",";
+       	}
+       	cout<<"\n";
+       }
+
+   	cout<<"All steps are done!"<<endl;
 
 
-	return 0;
+   	return 0;
 }
 

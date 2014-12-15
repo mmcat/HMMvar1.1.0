@@ -39,6 +39,10 @@ public:
 
 	Sequence query_seq_;
 	vector < Sequence > subject_seqs_;
+	vector<double> scores;
+	vector<double> wtscores;
+	vector<double> mtscores;
+	vector<string> ids;
 	map<string,vector <variant> > variants_;
 //	string hmm_input_file_name_;
 	string hmm_output_file_name_;
