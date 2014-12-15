@@ -36,6 +36,7 @@ char usage[] =
 		\n  --blastdbcmd <path to BLASTDBCMD>\
 		\n  --seqtype <sequence type, prot or nucl, default nucl>\
 		\n  --save_blastout <save psiblast output to filename>\
+		\n  --save_muscleout <save muscle output to filename>\
 		\n  --blastout <psiblast output filename>\
 		\n  --hmmbuildout <hmmbuild output filename>\
 		\n  Note: Please set all the paths correctly if you are not usinig the default paths.\
