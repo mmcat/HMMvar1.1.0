@@ -126,11 +126,18 @@ int main(int argc, char** argv){
        	grouped_ids.push_back(score.ids);
        }
 
-       for(int i=0;i<grouped_wtscores.size();i++){
+  /*     for(int i=0;i<grouped_wtscores.size();i++){
        	for(int j=0;j<grouped_wtscores[i].size();j++){
        		cout<<"("<<grouped_ids[i][j]<<":"<<grouped_wtscores[i][j]<<","<<grouped_mtscores[i][j]<<")"<<",";
        	}
        	cout<<"\n";
+       }*/
+       int i;
+       for(int j=0;j<grouped_wtscores[0].size();j++){
+    	   cout<<grouped_ids[0][j]<<"\t";
+    	   for(i=0;i<clustering.k;i++)
+    		   cout<<grouped_wtscores[i][j]-grouped_mtscores[i][j]<<"\t";
+    	   cout<<grouped_wtscores[i][j]-grouped_mtscores[i][j]<<"\n";
        }
 
    	cout<<"All steps are done!"<<endl;
