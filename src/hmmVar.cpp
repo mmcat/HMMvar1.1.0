@@ -76,6 +76,7 @@ int main(int argc, char** argv){
 
     }
     Log("======Step 4: clustering the MSA======\n",true);
+
     Kmeans clustering(3,&align);
     clustering.init();
     clustering.runKmeans();
@@ -106,7 +107,7 @@ int main(int argc, char** argv){
        score.mtscores.clear();
        score.ids.clear();
 
-       group_align_file_name=filename+"_target"+to_string(clustering.targetG);
+       group_align_file_name=filename+"_target"+char(clustering.targetG+'0');
        clustering.printCluter(clustering.targetG,group_align_file_name);
        score.getScore(opt.hmmbuild_output_file_name_,opt.hmmer_command_,wtaa_query_file_name,group_align_file_name);
        grouped_wtscores.push_back(score.wtscores);
@@ -115,7 +116,7 @@ int main(int argc, char** argv){
 
        for(int i=0;i<clustering.k;i++){
        	if(i==clustering.targetG) continue;
-       	group_align_file_name=filename+to_string(i);
+       	group_align_file_name=filename+char(i+'0');
        	clustering.printCluter(i,group_align_file_name);
            score.wtscores.clear();
            score.mtscores.clear();
@@ -126,12 +127,21 @@ int main(int argc, char** argv){
        	grouped_ids.push_back(score.ids);
        }
 
-       for(int i=0;i<grouped_wtscores.size();i++){
+ /*      for(int i=0;i<grouped_wtscores.size();i++){
        	for(int j=0;j<grouped_wtscores[i].size();j++){
        		cout<<"("<<grouped_ids[i][j]<<":"<<grouped_wtscores[i][j]<<","<<grouped_mtscores[i][j]<<")"<<",";
        	}
        	cout<<"\n";
+       }*/
+       int i;
+       for(int j=0;j<grouped_wtscores[0].size();j++){
+    	   cout<<grouped_ids[0][j]<<"\t";
+    	   for(i=0;i<clustering.k;i++){
+    		   cout<<grouped_wtscores[i][j]-grouped_mtscores[i][j]<<"\t";
+    	   }
+    	   cout<<grouped_wtscores[i][j]-grouped_mtscores[i][j]<<"\n";
        }
+
 
    	cout<<"All steps are done!"<<endl;
 
