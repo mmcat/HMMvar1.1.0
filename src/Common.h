@@ -31,7 +31,7 @@
 #define INTSCALE 1000.0
 #define CUTOFF 0.5
 
-#define BLASTDB "/research/mingming/ncbi-blast-2.2.26+/db/nr"
+#define BLASTDB "/research/mingming/ncbi-blast-2.2.26+/db/uniref90.fasta"
 #define BLASTDBCMD "/home/mingming/bin/blastdbcmd"
 #define PSIBLAST "/home/mingming/bin/psiblast"
 #define MUSCLE "/home/mingming/bin/muscle"

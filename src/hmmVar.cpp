@@ -76,6 +76,7 @@ int main(int argc, char** argv){
 
     }
     Log("======Step 4: clustering the MSA======\n",true);
+ //   align.align_output_file_stockholm_="/research/mingming/type_variants/data/TSHr.filled.aln.sto";
     Kmeans clustering(3,&align);
     clustering.init();
     clustering.runKmeans();
