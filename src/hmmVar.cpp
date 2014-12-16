@@ -136,8 +136,8 @@ int main(int argc, char** argv){
        for(int j=0;j<grouped_wtscores[0].size();j++){
     	   cout<<grouped_ids[0][j]<<"\t";
     	   for(i=0;i<clustering.k;i++)
-    		   cout<<grouped_wtscores[i][j]-grouped_mtscores[i][j]<<"\t";
-    	   cout<<grouped_wtscores[i][j]-grouped_mtscores[i][j]<<"\n";
+    		   cout<<"["<<grouped_wtscores[i][j]<<","<<grouped_mtscores[i][j]<<"]"<<"\t";
+    	   cout<<"["<<grouped_wtscores[i][j]<<","<<grouped_mtscores[i][j]<<"]"<<"\n";
        }
 
    	cout<<"All steps are done!"<<endl;
