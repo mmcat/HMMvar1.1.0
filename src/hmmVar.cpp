@@ -76,8 +76,9 @@ int main(int argc, char** argv){
 
     }
     Log("======Step 4: clustering the MSA======\n",true);
- //   align.align_output_file_stockholm_="/research/mingming/type_variants/data/TSHr.filled.aln.sto";
-    Kmeans clustering(3,&align);
+    align.align_output_file_stockholm_="/research/mingming/type_variants/data/TSHr258-292.uniprot90.sto.aln";
+    Kmeans clustering(4,&align);
+    clustering.targetS = score.query_seq_.def_;
     clustering.init();
     clustering.runKmeans();
 
@@ -137,8 +138,8 @@ int main(int argc, char** argv){
        for(int j=0;j<grouped_wtscores[0].size();j++){
     	   cout<<grouped_ids[0][j]<<"\t";
     	   for(i=0;i<clustering.k;i++)
-    		   cout<<"["<<grouped_wtscores[i][j]<<","<<grouped_mtscores[i][j]<<"]"<<"\t";
-    	   cout<<"["<<grouped_wtscores[i][j]<<","<<grouped_mtscores[i][j]<<"]"<<"\n";
+    		   cout<<"["<<grouped_wtscores[i][j]-grouped_mtscores[i][j]<<"]"<<"\t";
+    	   cout<<"["<<grouped_wtscores[i][j]-grouped_mtscores[i][j]<<"]"<<"\n";
        }
 
    	cout<<"All steps are done!"<<endl;

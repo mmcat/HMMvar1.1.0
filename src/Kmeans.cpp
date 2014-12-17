@@ -40,9 +40,15 @@ void Kmeans::init(){
 				}
 			}
 		}
-
+		int n=heads.size();
+		map<int,bool> mp;
+		srand (time(NULL));
 		for(int i=0;i<k;i++){
-			centers.push_back(seqs[heads[i]]);
+			int m=rand()%n;
+			while(mp.find(m)!=mp.end())
+				m=rand()%n;
+			mp[m]=true;
+			centers.push_back(seqs[heads[m]]);
 		}
 	}
 	else{
@@ -89,7 +95,7 @@ void Kmeans::updateCenter(int gnum){
 void Kmeans::runKmeans(){
 	int changes = seqs.size();
 	int stop = 3;
-
+    cout<<heads.back()<<endl;
 	while(changes>stop){
 		for(int i=0;i<groups.size();i++)
 			groups[i].clear();
@@ -114,8 +120,12 @@ void Kmeans::runKmeans(){
 				labels[i] = g;
 			}
 
+			if(this->targetS.find(heads[i])!=std::string::npos){
+				targetG=g;
+			}
+
 		}
-		targetG = g;
+
 		for(int i=0;i<groups.size();i++){
 			updateCenter(i);
 		}

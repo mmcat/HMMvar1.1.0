@@ -20,6 +20,7 @@ public:
 	int k;
 	int targetG;
 	int len;
+	string targetS;
 
 	map<string,string> seqs;
 	vector<string> centers;
