@@ -93,7 +93,7 @@ int MultiAlign::fasta2stockholm(string oldfile){
 
 	while(fgets(buf,BUF_SIZE_LARGE,fpin) != NULL){
 		if(buf[0]=='>') {
-			name.assign(buf,1,15);
+			name.assign(buf,1,19);
 			if(seq_map.find(name)!=seq_map.end()) seq_map[name].clear();
 			seq_map.insert(make_pair(name,vector<string>()));
 
@@ -118,6 +118,7 @@ int MultiAlign::fasta2stockholm(string oldfile){
 
 			fprintf(fpout,"%s %s",it->first.c_str(),it->second[i].c_str());
 		}
+
 		fprintf(fpout,"\n\n");
 	}
 
