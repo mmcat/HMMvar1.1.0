@@ -192,7 +192,34 @@ int ScoreVar::getVariants(string filename){
 
 		}
 
+	variants_bk = variants_;
+
 	return 0;
+}
+
+void ScoreVar::getVarInRange(int start,int end){
+	variants_.clear();
+	for(map<string,vector<variant> >::iterator it=variants_bk.begin();it!=variants_bk.end();++it){
+//		cout<<it->first<<endl;
+
+		vector<variant> vars=it->second;
+	    		for(int i=0;i<vars.size();){
+	    			if(vars[i].pos-1>=start && vars[i].pos-1<=end){
+	    				vars[i].pos = vars[i].pos-start;
+
+	    				variants_[it->first].push_back(vars[i]);
+	    				vars.erase(vars.begin()+i);
+
+	    			}
+	    			else i++;
+
+
+	    		}
+
+	    		 variants_bk[it->first] = vars;
+
+	    	}
+
 }
 
 double ScoreVar::getNullPro(int len){
@@ -276,6 +303,17 @@ int ScoreVar::buildHMM(string hmm_path,string multi_align_file){
 					exit(-1);
 
 		}
+
+		if (!save_hmm_file_name_.empty()) {
+							char cp_command[BUF_SIZE_MED];
+							sprintf(cp_command, "cp %s %s", hmm_out_file.c_str(), save_hmm_file_name_.c_str());
+							// will replace system
+							int ret;
+							ret = system(cp_command);
+							if (ret != 0) {
+								fprintf(stderr, "saving blastout file failed (%d)\n", ret);
+							}
+						}
 		return 0;
 
 
