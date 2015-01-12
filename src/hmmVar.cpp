@@ -21,12 +21,14 @@
 
 #include <iostream>
 #include <string>
+#include <fstream>
 
 #include "BlastSearch.h"
 #include "MultiAlign.h"
 #include "ScoreVar.h"
 #include "Option.h"
 #include "Kmeans.h"
+#include "AHCluster.h"
 
 using namespace std;
 
@@ -66,7 +68,7 @@ int main(int argc, char** argv){
 // step 3: parse blast results and make multiple sequence alignment (MSA) by muscle.
 	Log("======Step 3: make multiple sequence alignment (MSA) ======\n",true);
 	MultiAlign align(score.tmp_dir_,opt.save_muscle_);
-    if(opt.hmmbuild_output_file_name_.empty()){
+/*    if(opt.hmmbuild_output_file_name_.empty()){
 
         if (score.setHomoseq(opt.blastdbcmd_command_,opt.blastdb_file_name_,blast.subject_sequences_file_name_,blast.blast_output_file_name_,CUTOFF)!=-1 \
     		  && align.make_multi_align(opt.muscle_command_,blast.subject_sequences_file_name_,opt.muscle_output_file_name_)!=-1)
@@ -74,20 +76,63 @@ int main(int argc, char** argv){
     	   align.fasta2stockholm(align.align_output_file_fasta_);
 
 
-    }
+    }*/
     Log("======Step 4: clustering the MSA======\n",true);
-    align.align_output_file_stockholm_="/research/mingming/type_variants/data/TSHr258-292.uniprot90.sto.aln";
+    align.align_output_file_stockholm_="/Users/mingmingliu/Documents/study/2014spring/class_variants/data/PTPRD.uniprot90.aln.stk";
+    AHCluster ahc(&align);
+    ahc.targetS = score.query_seq_.def_;
+    ahc.init();
+    ahc.cleanData();
+//	ahc.runAHC();
+//	ahc.cuttree();
+
+
+/*
     Kmeans clustering(4,&align);
     clustering.targetS = score.query_seq_.def_;
     clustering.init();
     clustering.runKmeans();
-
+*/
 
 
 
     score.getVariants(opt.variants_file_name_);  // get the mutation (alleles and positions)
+    score.query_seq_bk = score.query_seq_;
     
     Log("======Step 5: make hidden Markov model and scoring ======\n",true);
+//    while(score.variants_bk.size()>0){
+    ofstream result_out("/Users/mingmingliu/Documents/study/2014spring/class_variants/data/pdprd_cluster_result.txt");
+    for(map<string,vector<variant> >::iterator it=score.variants_bk.begin();it!=score.variants_bk.end();++it){
+    	if(it->second.empty()) continue;
+
+    	variant seed = *(it->second.begin());
+    	int pos = seed.pos;
+    	int a_start,a_end;
+    	/*update alignment*/
+
+    	int align_pos = ahc.selectRange(pos,&a_start,&a_end);
+
+    	align.align_output_file_stockholm_ = "/Users/mingmingliu/Documents/study/2014spring/class_variants/data/tmp1.sto.aln";
+
+    	/*update query seq*/
+    	score.query_seq_ = score.query_seq_bk;
+    	score.query_seq_.seq_ = score.query_seq_.seq_.substr(pos-(align_pos-a_start),ahc.alignlen);
+    	int s_start = pos-(align_pos-a_start); // base 0
+    	int s_end = pos+(a_end-align_pos); // base 0
+
+    	wtaa_query_file_name = score.tmp_dir_+"/query_aa_file_wt";
+    	ofstream fout(wtaa_query_file_name.c_str());
+    	fout<<score.query_seq_.def_<<endl;
+    	fout<<score.query_seq_.seq_;
+    	fout.close();
+
+
+
+    	/*update variants*/
+    	score.getVarInRange(s_start,s_end);
+
+    	ahc.runAHC();
+    	ahc.cuttree();
 
        string group_align_file_name = score.tmp_dir_+"/group_align_output_file_stockholm";
        string filename = group_align_file_name;
@@ -108,25 +153,31 @@ int main(int argc, char** argv){
        score.mtscores.clear();
        score.ids.clear();
 
-       group_align_file_name=filename+"_target"+char(clustering.targetG+'0');
-       clustering.printCluter(clustering.targetG,group_align_file_name);
+       string labeled_all_seqs_filename = filename+"_labeled";
+       ahc.printCluster(-1,labeled_all_seqs_filename);
+
+       group_align_file_name=filename+"_target"+to_string(ahc.targetG);
+       ahc.printCluster(ahc.targetG,group_align_file_name);
        score.getScore(opt.hmmbuild_output_file_name_,opt.hmmer_command_,wtaa_query_file_name,group_align_file_name);
        grouped_wtscores.push_back(score.wtscores);
        grouped_mtscores.push_back(score.mtscores);
        grouped_ids.push_back(score.ids);
 
-       for(int i=0;i<clustering.k;i++){
-       	if(i==clustering.targetG) continue;
-       	group_align_file_name=filename+char(i+'0');
-       	clustering.printCluter(i,group_align_file_name);
-           score.wtscores.clear();
+       for(int i=0;i<ahc.groups;i++){
+    	   if(i==ahc.targetG) continue;
+    	   group_align_file_name=filename+to_string(i);
+    	   if(ahc.printCluster(i,group_align_file_name)==0) continue;
+//    	   ahc.printCluster(i,group_align_file_name);
+    	   score.wtscores.clear();
            score.mtscores.clear();
            score.ids.clear();
-       	score.getScore(opt.hmmbuild_output_file_name_,opt.hmmer_command_,wtaa_query_file_name,group_align_file_name);
-       	grouped_wtscores.push_back(score.wtscores);
-       	grouped_mtscores.push_back(score.mtscores);
-       	grouped_ids.push_back(score.ids);
+           score.getScore(opt.hmmbuild_output_file_name_,opt.hmmer_command_,wtaa_query_file_name,group_align_file_name);
+           grouped_wtscores.push_back(score.wtscores);
+           grouped_mtscores.push_back(score.mtscores);
+           grouped_ids.push_back(score.ids);
        }
+
+       score.query_seq_ = score.query_seq_bk;
 
   /*     for(int i=0;i<grouped_wtscores.size();i++){
        	for(int j=0;j<grouped_wtscores[i].size();j++){
@@ -134,17 +185,20 @@ int main(int argc, char** argv){
        	}
        	cout<<"\n";
        }*/
-       int i;
+//       cout<<ahc.groups<<"\t"<<grouped_wtscores[0].size()<<endl;
+
        for(int j=0;j<grouped_wtscores[0].size();j++){
-    	   cout<<grouped_ids[0][j]<<"\t";
-    	   for(i=0;i<clustering.k;i++)
+    	   result_out<<grouped_ids[0][j]<<"\t";
+    	   int i;
+    	   for(i=0;i<grouped_wtscores.size()-1;i++)
 
-    		   cout<<"["<<grouped_wtscores[i][j]<<","<<grouped_mtscores[i][j]<<"]"<<"\t";
+    		   result_out<<grouped_wtscores[i][j]-grouped_mtscores[i][j]<<"\t";
 
-    	   cout<<"["<<grouped_wtscores[i][j]-grouped_mtscores[i][j]<<"]"<<"\n";
+    	   result_out<<grouped_wtscores[i][j]-grouped_mtscores[i][j]<<"\n";
 
        }
-
+    }
+    result_out.close();
    	cout<<"All steps are done!"<<endl;
 
 

@@ -34,15 +34,23 @@ public:
 	vector<node*> result;
 	int npoints;
 	int alignlen;
-	static const double A = 0.8;
+	string targetS;
+	int targetG;
+	int groups;
+	static const double A = 0.75;
 
 	map<string,vector<string> > seqs;
+	map<string,vector<string> > seqs_bk;
 	vector<int> clusterid;
 	vector<string> heads;
+	vector<string> heads_bk;
 	vector<vector<double> > distmatrix;
 	MultiAlign* align;
 
 	void init();
+	void cleanData();
+	int selectRange(int pos, int* start,int* end);
+	double alignSeqSim(string seq1,string seq2,int* n1,int *n2);
 	void runAHC();
 	void getOptimized();
 	void getDistMat();
@@ -50,7 +58,7 @@ public:
 	double getEntropyDiff(int s1,int s2);
 	double find_closest_pair(int* lp, int* rp);
 	void cuttree();
-	void printCluster(int gnum,string filename);
+	int printCluster(int gnum,string filename);
 	map<char,int> getBKcount(int col);
 	map<char,int> getMergeCount(int s1,int s2,int col);
 //	int getUniqPermutate(string s);
