@@ -25,6 +25,7 @@
 #include <algorithm>
 #include <unistd.h>
 #include <map>
+#include <fstream>
 
 #include "ScoreVar.h"
 #include "CodeonAlphabeta.h"
@@ -123,11 +124,19 @@ int ScoreVar::getScore(string hmmbuild_file,string hmm_path,string wtaa_file_nam
 //		it->wt_proba_ = pro_wild;
 		double odds = getOdds(pro_wild,mt_proba);
 		double diffs = getDiffs(bs_wild,bs_mut);
+
+		ids.push_back(it->first);
 		for(vector<variant>::iterator itt = it->second.begin();itt!=it->second.end();++itt){
-			if(itt->type=="snp")
+			if(itt->type=="snp"){
 				fprintf(fp,"%s\t%.15f\t%s\n",it->first.c_str(),diffs,itt->commends_.c_str());
-			else
+				wtscores.push_back(bs_wild);
+				mtscores.push_back(bs_mut);
+			}
+			else{
 				fprintf(fp,"%s\t%.15f\t%s\n",it->first.c_str(),odds,itt->commends_.c_str());
+				wtscores.push_back(pro_wild);
+				mtscores.push_back(mt_proba);
+			}
 		}
 
 	}
@@ -183,7 +192,34 @@ int ScoreVar::getVariants(string filename){
 
 		}
 
+	variants_bk = variants_;
+
 	return 0;
+}
+
+void ScoreVar::getVarInRange(int start,int end){
+	variants_.clear();
+	for(map<string,vector<variant> >::iterator it=variants_bk.begin();it!=variants_bk.end();++it){
+//		cout<<it->first<<endl;
+
+		vector<variant> vars=it->second;
+	    		for(int i=0;i<vars.size();){
+	    			if(vars[i].pos-1>=start && vars[i].pos-1<=end){
+	    				vars[i].pos = vars[i].pos-start;
+
+	    				variants_[it->first].push_back(vars[i]);
+	    				vars.erase(vars.begin()+i);
+
+	    			}
+	    			else i++;
+
+
+	    		}
+
+	    		 variants_bk[it->first] = vars;
+
+	    	}
+
 }
 
 double ScoreVar::getNullPro(int len){
@@ -267,6 +303,17 @@ int ScoreVar::buildHMM(string hmm_path,string multi_align_file){
 					exit(-1);
 
 		}
+
+		if (!save_hmm_file_name_.empty()) {
+							char cp_command[BUF_SIZE_MED];
+							sprintf(cp_command, "cp %s %s", hmm_out_file.c_str(), save_hmm_file_name_.c_str());
+							// will replace system
+							int ret;
+							ret = system(cp_command);
+							if (ret != 0) {
+								fprintf(stderr, "saving blastout file failed (%d)\n", ret);
+							}
+						}
 		return 0;
 
 
@@ -398,6 +445,10 @@ int ScoreVar::CreateFastaFileUsingBlastdbcmd(string blastdb_cmd,string blastdb,s
 				subject_seq_file_name.c_str()
 				);
 		system(blastdbcmd);
+
+		ofstream fout(subject_seq_file_name.c_str(),ios::app);
+		fout<<query_seq_.def_<<"\n"<<query_seq_.seq_;
+		fout.close();
 
 	return 0;
 }

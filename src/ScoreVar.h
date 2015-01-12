@@ -38,10 +38,17 @@ public:
 	virtual ~ScoreVar();
 
 	Sequence query_seq_;
+	Sequence query_seq_bk;
 	vector < Sequence > subject_seqs_;
+	vector<double> scores;
+	vector<double> wtscores;
+	vector<double> mtscores;
+	vector<string> ids;
 	map<string,vector <variant> > variants_;
+	map<string,vector <variant> > variants_bk;
 //	string hmm_input_file_name_;
 	string hmm_output_file_name_;
+	string save_hmm_file_name_;
         string variant_file_name_;
 	string tmp_dir_;
 	string score_out_file_name_;
@@ -63,6 +70,7 @@ public:
 	void getMutantSeqFromVariants(variant var,Sequence* mut_seq);
 	void getMutantSeqFromVariantsSet(vector<variant> &var,Sequence* mut_seq);
 	void translate(const Sequence& aa, Sequence * nt,int type);
+	void getVarInRange(int start,int end);
 
 
 private:
