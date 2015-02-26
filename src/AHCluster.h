@@ -58,6 +58,7 @@ public:
 	double getEntropyDiff(int s1,int s2);
 	double find_closest_pair(int* lp, int* rp);
 	void cuttree();
+	bool validCol(int pos);
 	int printCluster(int gnum,string filename);
 	map<char,int> getBKcount(int col);
 	map<char,int> getMergeCount(int s1,int s2,int col);

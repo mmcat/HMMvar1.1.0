@@ -78,7 +78,8 @@ int main(int argc, char** argv){
 
     }*/
     Log("======Step 4: clustering the MSA======\n",true);
-    align.align_output_file_stockholm_="/Users/mingmingliu/Documents/study/2014spring/class_variants/data/PTPRD.uniprot90.aln.stk";
+    align.align_output_file_stockholm_="/Users/mingmingliu/Documents/study/2014spring/class_variants/data/BRAF.uniprot90.aln.stk";
+
     AHCluster ahc(&align);
     ahc.targetS = score.query_seq_.def_;
     ahc.init();
@@ -101,7 +102,7 @@ int main(int argc, char** argv){
     
     Log("======Step 5: make hidden Markov model and scoring ======\n",true);
 //    while(score.variants_bk.size()>0){
-    ofstream result_out("/Users/mingmingliu/Documents/study/2014spring/class_variants/data/pdprd_cluster_result.txt");
+    ofstream result_out("/Users/mingmingliu/Documents/study/2014spring/class_variants/data/braf_simu_cluster_result.txt");
     for(map<string,vector<variant> >::iterator it=score.variants_bk.begin();it!=score.variants_bk.end();++it){
     	if(it->second.empty()) continue;
 
