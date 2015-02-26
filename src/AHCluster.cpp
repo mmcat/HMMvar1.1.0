@@ -60,6 +60,19 @@ void AHCluster::init(){
 
 }
 
+bool AHCluster::validCol(int pos){
+	double gapn=0;
+	for(int i=0;i<npoints;i++){
+		if(seqs[heads[i]][0][pos]=='-')
+			gapn++;
+
+	}
+	double per = gapn/npoints;
+	if(per<=0.5) return true;
+	else return false;
+
+}
+
 int AHCluster::selectRange(int pos,int* start,int* end){
 
 	seqs = seqs_bk;
@@ -76,9 +89,11 @@ int AHCluster::selectRange(int pos,int* start,int* end){
 
 	*start=align_pos-1;
 	*end=align_pos-1;
-	while(*start>=0 && seqs[targetS][0][*start]!='-') (*start)--;
+//	while(*start>=0 && seqs[targetS][0][*start]!='-') (*start)--;
+	while(*start>=0 && (seqs[targetS][0][*start]!='-'||validCol(*start))) (*start)--;
 	(*start)++;
-	while(*end<alignlen && seqs[targetS][0][*end]!='-') (*end)++;
+//	while(*end<alignlen && seqs[targetS][0][*end]!='-') (*end)++;
+	while(*end<alignlen && (seqs[targetS][0][*end]!='-'||validCol(*end))) (*end)++;
 	(*end)--;
 
 	alignlen = *end-*start+1;
@@ -319,7 +334,7 @@ int AHCluster::printCluster(int gnum,string filename){
 
 void AHCluster::cleanData(){
 	int j,i=1;
-	while(i<heads.size())
+	while(i<heads.size()) //remvoe redundant seqs
 	{
 
 		for(j=0;j<i;j++){
@@ -343,13 +358,13 @@ void AHCluster::cleanData(){
 		if(j==i)i++;
 
 	}
-	for(int icol=0;icol<alignlen;){
+	for(int icol=0;icol<alignlen;){ //remove low quality cols
 		int irow;
 		int gapn=0;
 		for(irow=0;irow<heads.size();irow++){
 			if(seqs[heads[irow]][0][icol]=='-') gapn++;
 		}
-		if(gapn>=irow*0.99){
+		if(gapn>=irow*0.80&&seqs[targetS][0][icol]=='-'){
 			for(int i=0;i<heads.size();i++)
 				seqs[heads[i]][0].erase(seqs[heads[i]][0].begin()+icol);
 		}
