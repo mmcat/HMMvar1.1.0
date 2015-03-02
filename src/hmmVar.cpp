@@ -78,22 +78,27 @@ int main(int argc, char** argv){
 
     }*/
     Log("======Step 4: clustering the MSA======\n",true);
-    align.align_output_file_stockholm_="/Users/mingmingliu/Documents/study/2014spring/class_variants/data/BRAF.uniprot90.aln.stk";
+    align.align_output_file_stockholm_="/Users/mingmingliu/Documents/study/2014spring/class_variants/data/TSHr.uniprot90.sto.aln";
 
     AHCluster ahc(&align);
+/*
     ahc.targetS = score.query_seq_.def_;
     ahc.init();
-    ahc.cleanData();
+    ahc.cleanData(); */
+
 //	ahc.runAHC();
 //	ahc.cuttree();
 
 
-/*
-    Kmeans clustering(4,&align);
+
+    Kmeans clustering(3,&align);
     clustering.targetS = score.query_seq_.def_;
     clustering.init();
-    clustering.runKmeans();
-*/
+    ahc.targetS = score.query_seq_.def_;
+    ahc.init();
+    ahc.cleanData();
+//    clustering.runKmeans();
+
 
 
 
@@ -102,7 +107,7 @@ int main(int argc, char** argv){
     
     Log("======Step 5: make hidden Markov model and scoring ======\n",true);
 //    while(score.variants_bk.size()>0){
-    ofstream result_out("/Users/mingmingliu/Documents/study/2014spring/class_variants/data/braf_simu_cluster_result.txt");
+    ofstream result_out("/Users/mingmingliu/Documents/study/2014spring/class_variants/data/TSHr_kmeans3_cluster_result.txt");
     for(map<string,vector<variant> >::iterator it=score.variants_bk.begin();it!=score.variants_bk.end();++it){
     	if(it->second.empty()) continue;
 
@@ -129,75 +134,75 @@ int main(int argc, char** argv){
 
 
 
+
     	/*update variants*/
     	score.getVarInRange(s_start,s_end);
 
-    	ahc.runAHC();
-    	ahc.cuttree();
+    	clustering.runKmeans();
 
-       string group_align_file_name = score.tmp_dir_+"/group_align_output_file_stockholm";
-       string filename = group_align_file_name;
-       vector<vector<double> > grouped_wtscores;
-       vector<vector<double> > grouped_mtscores;
-       vector<vector<string> > grouped_ids;
+//    	ahc.runAHC();
+//    	ahc.cuttree();
 
-       score.wtscores.clear();
-       score.mtscores.clear();
-       score.ids.clear();
+    	Log("======Step 5: make hidden Markov model and scoring ======\n",true);
 
-       score.getScore(opt.hmmbuild_output_file_name_,opt.hmmer_command_,wtaa_query_file_name,align.align_output_file_stockholm_);
-       grouped_wtscores.push_back(score.wtscores);
-       grouped_mtscores.push_back(score.mtscores);
-       grouped_ids.push_back(score.ids);
+    	       string group_align_file_name = score.tmp_dir_+"/group_align_output_file_stockholm";
+    	       string filename = group_align_file_name;
+    	       vector<vector<double> > grouped_wtscores;
+    	       vector<vector<double> > grouped_mtscores;
+    	       vector<vector<string> > grouped_ids;
 
-       score.wtscores.clear();
-       score.mtscores.clear();
-       score.ids.clear();
+    	       score.wtscores.clear();
+    	       score.mtscores.clear();
+    	       score.ids.clear();
 
-       string labeled_all_seqs_filename = filename+"_labeled";
-       ahc.printCluster(-1,labeled_all_seqs_filename);
+    	       score.getScore(opt.hmmbuild_output_file_name_,opt.hmmer_command_,wtaa_query_file_name,align.align_output_file_stockholm_);
+    	       grouped_wtscores.push_back(score.wtscores);
+    	       grouped_mtscores.push_back(score.mtscores);
+    	       grouped_ids.push_back(score.ids);
 
-       group_align_file_name=filename+"_target"+to_string(ahc.targetG);
-       ahc.printCluster(ahc.targetG,group_align_file_name);
-       score.getScore(opt.hmmbuild_output_file_name_,opt.hmmer_command_,wtaa_query_file_name,group_align_file_name);
-       grouped_wtscores.push_back(score.wtscores);
-       grouped_mtscores.push_back(score.mtscores);
-       grouped_ids.push_back(score.ids);
+    	       score.wtscores.clear();
+    	       score.mtscores.clear();
+    	       score.ids.clear();
 
-       for(int i=0;i<ahc.groups;i++){
-    	   if(i==ahc.targetG) continue;
-    	   group_align_file_name=filename+to_string(i);
-    	   if(ahc.printCluster(i,group_align_file_name)==0) continue;
-//    	   ahc.printCluster(i,group_align_file_name);
-    	   score.wtscores.clear();
-           score.mtscores.clear();
-           score.ids.clear();
-           score.getScore(opt.hmmbuild_output_file_name_,opt.hmmer_command_,wtaa_query_file_name,group_align_file_name);
-           grouped_wtscores.push_back(score.wtscores);
-           grouped_mtscores.push_back(score.mtscores);
-           grouped_ids.push_back(score.ids);
-       }
+    	       group_align_file_name=filename+"_target"+char(clustering.targetG+'0');
+    	       clustering.printCluter(clustering.targetG,group_align_file_name);
+    	       score.getScore(opt.hmmbuild_output_file_name_,opt.hmmer_command_,wtaa_query_file_name,group_align_file_name);
+    	       grouped_wtscores.push_back(score.wtscores);
+    	       grouped_mtscores.push_back(score.mtscores);
+    	       grouped_ids.push_back(score.ids);
 
-       score.query_seq_ = score.query_seq_bk;
+    	       for(int i=0;i<clustering.k;i++){
+    	       	if(i==clustering.targetG) continue;
+    	       	group_align_file_name=filename+char(i+'0');
+    	       	clustering.printCluter(i,group_align_file_name);
+    	           score.wtscores.clear();
+    	           score.mtscores.clear();
+    	           score.ids.clear();
+    	       	score.getScore(opt.hmmbuild_output_file_name_,opt.hmmer_command_,wtaa_query_file_name,group_align_file_name);
+    	       	grouped_wtscores.push_back(score.wtscores);
+    	       	grouped_mtscores.push_back(score.mtscores);
+    	       	grouped_ids.push_back(score.ids);
+    	       }
 
-  /*     for(int i=0;i<grouped_wtscores.size();i++){
-       	for(int j=0;j<grouped_wtscores[i].size();j++){
-       		cout<<"("<<grouped_ids[i][j]<<":"<<grouped_wtscores[i][j]<<","<<grouped_mtscores[i][j]<<")"<<",";
-       	}
-       	cout<<"\n";
-       }*/
-//       cout<<ahc.groups<<"\t"<<grouped_wtscores[0].size()<<endl;
+    	  /*     for(int i=0;i<grouped_wtscores.size();i++){
+    	       	for(int j=0;j<grouped_wtscores[i].size();j++){
+    	       		cout<<"("<<grouped_ids[i][j]<<":"<<grouped_wtscores[i][j]<<","<<grouped_mtscores[i][j]<<")"<<",";
+    	       	}
+    	       	cout<<"\n";
+    	       }*/
+    	       for(int j=0;j<grouped_wtscores[0].size();j++){
+    	           	   result_out<<grouped_ids[0][j]<<"\t";
+    	           	   int i;
+    	           	   for(i=0;i<grouped_wtscores.size()-1;i++)
 
-       for(int j=0;j<grouped_wtscores[0].size();j++){
-    	   result_out<<grouped_ids[0][j]<<"\t";
-    	   int i;
-    	   for(i=0;i<grouped_wtscores.size()-1;i++)
+    	           		   result_out<<grouped_wtscores[i][j]-grouped_mtscores[i][j]<<"\t";
 
-    		   result_out<<grouped_wtscores[i][j]-grouped_mtscores[i][j]<<"\t";
+    	           	   result_out<<grouped_wtscores[i][j]-grouped_mtscores[i][j]<<"\n";
 
-    	   result_out<<grouped_wtscores[i][j]-grouped_mtscores[i][j]<<"\n";
+    	              }
 
-       }
+
+
     }
     result_out.close();
    	cout<<"All steps are done!"<<endl;
