@@ -89,11 +89,11 @@ int AHCluster::selectRange(int pos,int* start,int* end){
 
 	*start=align_pos-1;
 	*end=align_pos-1;
-	while(*start>=0 && seqs[targetS][0][*start]!='-') (*start)--;
-//	while(*start>=0 && (seqs[targetS][0][*start]!='-'||validCol(*start))) (*start)--;
+//	while(*start>=0 && seqs[targetS][0][*start]!='-') (*start)--;
+	while(*start>=0 && (seqs[targetS][0][*start]!='-'||validCol(*start))) (*start)--;
 	(*start)++;
-	while(*end<alignlen && seqs[targetS][0][*end]!='-') (*end)++;
-//	while(*end<alignlen && (seqs[targetS][0][*end]!='-'||validCol(*end))) (*end)++;
+//	while(*end<alignlen && seqs[targetS][0][*end]!='-') (*end)++;
+	while(*end<alignlen && (seqs[targetS][0][*end]!='-'||validCol(*end))) (*end)++;
 	(*end)--;
 
 	alignlen = *end-*start+1;
@@ -364,7 +364,7 @@ void AHCluster::cleanData(){
 		for(irow=0;irow<heads.size();irow++){
 			if(seqs[heads[irow]][0][icol]=='-') gapn++;
 		}
-		if(gapn>=irow*0.99&&seqs[targetS][0][icol]=='-'){
+		if(gapn>=irow*0.80&&seqs[targetS][0][icol]=='-'){
 			for(int i=0;i<heads.size();i++)
 				seqs[heads[i]][0].erase(seqs[heads[i]][0].begin()+icol);
 		}
@@ -440,4 +440,3 @@ map<char,int> AHCluster::getMergeCount(int s1,int s2,int col){
 			aacount[seqs[heads[s2]][i][col]]++;
 	return aacount;
 }
-
